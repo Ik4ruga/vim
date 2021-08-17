@@ -197,7 +197,10 @@ Plug 'Chiel92/vim-autoformat'
 Plug 'google/vim-maktaba'
 Plug 'google/vim-codefmt'
 
-"debugger
+" analysis
+Plug 'dense-analysis/ale'
+
+" debugger
 "Plug 'puremourning/vimspector', {'do': './install_gadget.py --enable-c --enable-python --enable-go'}
 Plug 'skywind3000/vim-terminal-help' "内置终端改良
 
@@ -268,12 +271,27 @@ map g/ <Plug>(incsearch-stay)
 
 " === LeaderF
 nnoremap <c-f> :LeaderfFile .<cr>
+noremap <F2> :LeaderfFunction!<cr>
+
 let g:Lf_WildIgnore = {
             \ 'dir': ['.svn','.git','.hg','.vscode','.wine','.deepinwine','.oh-my-zsh'],
             \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
             \}
 let g:Lf_UseCache = 0
 let g:Lf_ReverseOrder = 1
+
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_PreviewResult = {'Function':0, 'Colorscheme':1}
+
+let g:Lf_NormalMap = {
+	\ "File":   [["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']],
+	\ "Buffer": [["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<CR>']],
+	\ "Mru":    [["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<CR>']],
+	\ "Tag":    [["<ESC>", ':exec g:Lf_py "tagExplManager.quit()"<CR>']],
+	\ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
+	\ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
+	\ }
 
 
 " === ack
@@ -341,13 +359,37 @@ augroup autoformat_settings
 	" autocmd FileType gn AutoFormatBuffer gn
 	" autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
 	autocmd FileType java AutoFormatBuffer google-java-format
-	autocmd FileType python AutoFormatBuffer yapf
+	autocmd FileType python AutoFormatBuffer black
 	" Alternative: autocmd FileType python AutoFormatBuffer autopep8
 	" autocmd FileType rust AutoFormatBuffer rustfmt
 	" autocmd FileType vue AutoFormatBuffer prettier
 augroup END
 "au BufWrite * :Autoformat      "autoformat toggle
-let g:formatter_yapf_style = 'pep8'
+"let g:formatter_yapf_style = 'pep8'
+
+" === ale
+"
+let g:ale_sign_column_always = 0
+let g:ale_set_highlights = 0
+"自定义error和warning图标
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚡'
+
+"在vim自带的状态栏中整合ale
+let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+"显示Linter名称,出错或警告等相关信息
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+nnoremap sp <Plug>(ale_previous_wrap)
+nnoremap sn <Plug>(ale_next_wrap)
+
+"<Leader>s触发/关闭语法检查
+nmap <Leader>s :ALEToggle<CR>
+"<Leader>d查看错误或警告的详细信息
+nmap <Leader>c :ALEDetail<CR>
+
 " === coc.nvim
 let g:coc_global_extensions = [
     \ 'coc-diagnostic',
