@@ -54,6 +54,7 @@
             "yamllint"
         ],
         "c": "clang",
+        "python": "pylint",
         "elixir": "mix_format",
         "eelixir": "mix_format"
     },
