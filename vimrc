@@ -184,16 +184,16 @@ Plug 'terryma/vim-smooth-scroll'
 Plug 'rhysd/clever-f.vim'
 
 " complete
-Plug 'jiangmiao/auto-pairs'
+"Plug 'jiangmiao/auto-pairs'
 Plug 'godlygeek/tabular'
-Plug 'tpope/vim-endwise'
+"Plug 'tpope/vim-endwise'
 Plug 'Shougo/echodoc.vim' "Displays function signatures from completions in the command line.
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " autoformat
-Plug 'Chiel92/vim-autoformat'
+"Plug 'Chiel92/vim-autoformat'
 Plug 'google/vim-maktaba'
 Plug 'google/vim-codefmt'
 
@@ -347,24 +347,24 @@ let g:vista#renderer#icons = {
 
 let g:scrollstatus_size = 15
 
-" === AutoFormat
-let g:python3_host_prog="/usr/bin/python"
-noremap <F3> :Autoformat<CR>
-augroup autoformat_settings
-	" autocmd FileType bzl AutoFormatBuffer buildifier
-	autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-	" autocmd FileType dart AutoFormatBuffer dartfmt
-	" autocmd FileType go AutoFormatBuffer gofmt
-	" autocmd FileType gn AutoFormatBuffer gn
-	" autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-	autocmd FileType java AutoFormatBuffer google-java-format
-	autocmd FileType python AutoFormatBuffer black
-	" Alternative: autocmd FileType python AutoFormatBuffer autopep8
-	" autocmd FileType rust AutoFormatBuffer rustfmt
-	" autocmd FileType vue AutoFormatBuffer prettier
-augroup END
-"au BufWrite * :Autoformat      "autoformat toggle
-"let g:formatter_yapf_style = 'pep8'
+"" === AutoFormat
+"let g:python3_host_prog="/usr/bin/python"
+"noremap <F3> :Autoformat<CR>
+"augroup autoformat_settings
+"	" autocmd FileType bzl AutoFormatBuffer buildifier
+"	autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+"	" autocmd FileType dart AutoFormatBuffer dartfmt
+"	" autocmd FileType go AutoFormatBuffer gofmt
+"	" autocmd FileType gn AutoFormatBuffer gn
+"	" autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+"	autocmd FileType java AutoFormatBuffer google-java-format
+"	autocmd FileType python AutoFormatBuffer black
+"	" Alternative: autocmd FileType python AutoFormatBuffer autopep8
+"	" autocmd FileType rust AutoFormatBuffer rustfmt
+"	" autocmd FileType vue AutoFormatBuffer prettier
+"augroup END
+""au BufWrite * :Autoformat      "autoformat toggle
+""let g:formatter_yapf_style = 'pep8'
 
 " === coc.nvim
 let g:coc_global_extensions = [
@@ -409,8 +409,8 @@ function! s:check_back_space() abort
 endfunction
 inoremap <silent><expr> <m-l> coc#_select_confirm()
 
-inoremap <silent><expr> <c-space> coc#refresh()
-inoremap <silent><expr> <c-o> coc#refresh()
+inoremap <silent><expr> <m-o> coc#refresh()
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! Show_documentation()
     call CocActionAsync('highlight')
