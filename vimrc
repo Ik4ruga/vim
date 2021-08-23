@@ -7,12 +7,12 @@
 "
 
 " === System
+set nocompatible         " 设置不兼容原始vi模式
 set autochdir           "自动切换工作目录
 
 " === Editor behavior
-set nocompatible         " 设置不兼容原始vi模式
 filetype on              " 设置开启文件类型侦测
-filetype plugin on       " 设置加载对应文件类型的插件
+filetype plugin indent on       " 设置加载对应文件类型的插件
 set noeb                 " 关闭错误的提示
 syntax enable            " 开启语法高亮功能
 syntax on                " 自动语法高亮
@@ -126,6 +126,47 @@ let g:neoterm_autoscroll = 1
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | execute "normal! g'\"" | endif 
 " 打开文件自动定位到最后编辑的位置
 
+"inoremap ' ''<left>
+"inoremap " ""<left>
+"inoremap ( ()<left>
+"inoremap [ []<left>
+"inoremap { {}<left>
+"
+"function! ClosePair(char)
+"
+"if getline('.')[col('.')-1]==a:char
+"return "\<Right>"
+"else
+"return a:char
+"endif
+"endfunction
+"括号自动删除：
+"
+"function! RemovePairs()
+"    let l:line = getline(".")
+"    let l:previous_char = l:line[col(".")-1]
+"    if index(["(", "[", "{"], l:previous_char) != -1
+"        let l:original_pos = getpos(".")
+"        execute "normal %"
+"        let l:new_pos = getpos(".")
+"        if l:original_pos == l:new_pos
+"            execute "normal! a\<BS>"
+"            return
+"        end
+"        let l:line2 = getline(".")
+"        if len(l:line2) == col(".")
+"            execute "normal! v%xa"
+"        else
+"            execute "normal! v%xi"
+"        end
+"    else
+"        execute "normal! a\<BS>"
+"
+"    end
+"endfunction
+"inoremap <BS> <ESC>:call RemovePairs()<CR>a
+
+
 " 定义跳出括号函数，用于跳出括号
 func SkipPair()
     if getline('.')[col('.') - 1] == ')' || getline('.')[col('.') - 1] == ']' || getline('.')[col('.') - 1] == '"' || getline('.')[col('.') - 1] == "'" || getline('.')[col('.') - 1] == '}'
@@ -137,10 +178,11 @@ endfunc
 
 " === map key ===
 let mapleader = "," 
-noremap <LEADER>rv :e $HOME/.vimrc<CR>
 inoremap jj <ESC>
 inoremap ]] <c-r>=SkipPair()<CR>
+inoremap <leader><leader><leader> <ESC>:w<CR>
 
+nnoremap <leader>w :w<CR>
 nnoremap <m-w> :bn<cr>
 nnoremap <m-e> :b#<cr>
 
@@ -161,9 +203,12 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
 Plug 'luochen1990/rainbow'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
 " 主题
 Plug 'joshdick/onedark.vim'
+Plug 'altercation/vim-colors-solarized'
 
 " General Highlighter
 Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
@@ -184,7 +229,7 @@ Plug 'terryma/vim-smooth-scroll'
 Plug 'rhysd/clever-f.vim'
 
 " complete
-"Plug 'jiangmiao/auto-pairs'
+Plug 'jiangmiao/auto-pairs'
 Plug 'godlygeek/tabular'
 "Plug 'tpope/vim-endwise'
 Plug 'Shougo/echodoc.vim' "Displays function signatures from completions in the command line.
@@ -219,6 +264,7 @@ Plug 'sgur/vim-textobj-parameter'
 
 " others
 Plug 'mg979/vim-visual-multi'	"多个光标
+
 call plug#end()
 
 
@@ -347,24 +393,16 @@ let g:vista#renderer#icons = {
 
 let g:scrollstatus_size = 15
 
-"" === AutoFormat
-"let g:python3_host_prog="/usr/bin/python"
-"noremap <F3> :Autoformat<CR>
-"augroup autoformat_settings
-"	" autocmd FileType bzl AutoFormatBuffer buildifier
-"	autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-"	" autocmd FileType dart AutoFormatBuffer dartfmt
-"	" autocmd FileType go AutoFormatBuffer gofmt
-"	" autocmd FileType gn AutoFormatBuffer gn
-"	" autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-"	autocmd FileType java AutoFormatBuffer google-java-format
-"	autocmd FileType python AutoFormatBuffer black
-"	" Alternative: autocmd FileType python AutoFormatBuffer autopep8
-"	" autocmd FileType rust AutoFormatBuffer rustfmt
-"	" autocmd FileType vue AutoFormatBuffer prettier
-"augroup END
-""au BufWrite * :Autoformat      "autoformat toggle
-""let g:formatter_yapf_style = 'pep8'
+" === auto-pairs
+let g:AutoPairsFlyMode = 1
+let g:AutoPairsShortcutBackInsert = '<M-b>'
+let g:AutoPairsShortcutJump =  '<M-n>'
+let g:AutoPairsShortcutToggle = ''
+let g:AutoPairsMapCh=0
+let g:AutoPairsMapCR = 0
+let g:AutoPairsMapSpace = 0
+let g:AutoPairsMultilineClose = 0
+
 
 " === coc.nvim
 let g:coc_global_extensions = [
@@ -377,31 +415,19 @@ let g:coc_global_extensions = [
     \ 'coc-vimlsp',
     \ 'coc-yaml',
     \ 'coc-yank']
-"   \ 'coc-docker',     "docker for lsp 
-"   \ 'coc-snippets',   "作者承认在vim中有bug了
-"   \ 'coc-python',
-"   \ 'coc-explorer',
-"   \ 'coc-eslint',     "前端代码格式化配置, 还需要配置
-"   \ 'coc-import-cost  "谜之插件
-"   \ 'coc-jest'        "js测试单元
-"   \ 'coc-lists',      "vim上启动延迟很高
-"   \ 'coc-prettier',   "前端代码格式化配置
-"   \ 'coc-prisma',     "Coc extension that implements Prisma Language Server.
-"   \ 'coc-sourcekit',  "给swift用的lsp, features like code-completion and jump-to-definition
-"   \ 'coc-stylelint',  "前端语法检查工具
-"   \ 'coc-syntax',     "又是没见过的蜜汁syntax检查工具
-"   \ 'coc-tailwindcss',    "前端框架
-"   \ 'coc-tslint-plugin',  "WARNING this extension is deprecated 
-"   \ 'coc-vetur',      "Vue language server extension for coc.nvim. 前端使的
 
 inoremap <silent><expr><TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-"if exists('*complete_info')
-"    inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-"else
-"    inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-"endif
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+if exists('*complete_info')
+    inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+    inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
 
 function! s:check_back_space() abort
     let col = col('.') - 1
@@ -410,7 +436,6 @@ endfunction
 inoremap <silent><expr> <m-l> coc#_select_confirm()
 
 inoremap <silent><expr> <m-o> coc#refresh()
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! Show_documentation()
     call CocActionAsync('highlight')
@@ -450,7 +475,7 @@ nmap <silent> gr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
 nmap tt :CocCommand explorer<CR>
 " coc-translator
-nmap ts <Plug>(coc-translator-p)
+nmap <leader>t <Plug>(coc-translator-p)
 " Remap for do codeAction of selected region
 function! s:cocActionsOpenFromSelected(type) abort
   execute 'CocCommand actions.open ' . a:type
@@ -462,7 +487,7 @@ nmap <leader>aw  <Plug>(coc-codeaction-selected)w
 " nnoremap <leader>tl :CocList todolist<CR>
 " nnoremap <leader>tu :CocCommand todolist.download<CR>:CocCommand todolist.upload<CR>
 " coc-tasks
-noremap <silent> <leader>ts :CocList tasks<CR>
+noremap <silent> <leader>s :CocList tasks<CR>
 
 "" coc-snippets
 "imap <C-l> <Plug>(coc-snippets-expand)
@@ -552,4 +577,3 @@ let g:terminal_color_14 = '#9AEDFE'
 set background=dark
 let g:onedark_termcolors=256
 colorscheme onedark
-

@@ -6,13 +6,11 @@
     "coc.preferences.messageLevel": "error",
     "coc.source.around.firstMatch": false,
     "coc.source.buffer.firstMatch": false,
-    //"coc.source.syntax.firstMatch": false,
     "suggest.detailMaxLength": 60,
     "suggest.noselect": true,
     "suggest.enablePreselect": false,
     "suggest.triggerAfterInsertEnter": true,
     "suggest.autoTrigger": "always",
-    //"suggest.timeout": 5000,
     "suggest.enablePreview": true,
     "suggest.floatEnable": true,
     "suggest.detailField": "preview",
@@ -83,6 +81,103 @@
             },
             "offsetColumn": 1,
             "formatLines": 1
+        },
+        "vint": {
+            "command": "vint",
+            "debounce": 100,
+            "args": [
+                "--enable-neovim",
+                "-"
+            ],
+            "offsetLine": 0,
+            "offsetColumn": 0,
+            "sourceName": "vint",
+            "formatLines": 1,
+            "formatPattern": [
+                "[^:]+:(\\d+):(\\d+):\\s*(.*)(\\r|\\n)*$",
+                {
+                    "line": 1,
+                    "column": 2,
+                    "message": 3
+                }
+            ]
+        },
+        "shellcheck": {
+            "command": "shellcheck",
+            "debounce": 100,
+            "args": [
+                "--format",
+                "json",
+                "-"
+            ],
+            "sourceName": "shellcheck",
+            "parseJson": {
+                "line": "line",
+                "column": "column",
+                "endLine": "endLine",
+                "endColumn": "endColumn",
+                "message": "${message} [${code}]",
+                "security": "level"
+            },
+            "securities": {
+                "error": "error",
+                "warning": "warning",
+                "info": "info",
+                "style": "hint"
+            }
+        },
+        "markdownlint": {
+            "command": "markdownlint",
+            "isStderr": true,
+            "debounce": 100,
+            "args": [
+                "--stdin"
+            ],
+            "offsetLine": 0,
+            "offsetColumn": 0,
+            "sourceName": "markdownlint",
+            "formatLines": 1,
+            "formatPattern": [
+                "^.*?:\\s?(\\d+)(:(\\d+)?)?\\s(MD\\d{3}\\/[A-Za-z0-9-/]+)\\s(.*)$",
+                {
+                    "line": 1,
+                    "column": 3,
+                    "message": [
+                        4
+                    ]
+                }
+            ]
+        },
+        "clang-tidy": {
+            "sourceName": "clang-tidy",
+            "command": "clang-tidy",
+            "args": [
+                "-checks ''",
+                "%file",
+                "--"
+            ],
+            "debounce": 100,
+            "isStderr": true,
+            "isStdout": false,
+            "offsetLine": 0,
+            "offsetColumn": 0,
+            "formatPattern": [
+                "^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.+?)$",
+                {
+                    "line": 1,
+                    "column": 2,
+                    "message": 4,
+                    "security": 3
+                }
+            ],
+            "securities": {
+                "information": "\uf449",
+                "portability": "\uf071",
+                "performance": "\uf071",
+                "style": "\uf071",
+                "warning": "\uf071",
+                "error": "\ue0c4"
+            }
         }
     },
     "diagnostic-languageserver.filetypes": {
@@ -92,7 +187,8 @@
             "yamllint"
         ],
         "python": "pylint",
-        "sh": "shellcheck"
+        "sh": "shellcheck",
+        "c": "clang-tidy"
     },
     "diagnostic-languageserver.formatters": {
         "black": {
@@ -119,36 +215,20 @@
             "command": "clang-format",
             "args": [
                 "-style=LLVM",
-                "-i"
+                "-i",
+                "%file"
             ]
         }
     },
-    "diagnostic-languageserver.formatFiletypes": {
-        "vim": "vint",
-        "sh": "shellcheck",
-        "email": "languagetool",
-        "yaml": [
-            "yamllint"
-        ],
-        "c": "clang-format",
-        "python": [
-            "black",
-            "isort",
-            "pylint"
-        ],
-        "elixir": "mix_format",
-        "eelixir": "mix_format"
-    },
+    "diagnostic-languageserver.formatFiletypes": {},
     "diagnostic-languageserver.enable": true,
     "diagnostic-languageserver.trace.server": "verbose",
-    // "diagnostic.signOffset": 1,
     "diagnostic.errorSign": "\uf467",
     "diagnostic.warningSign": "\uf071",
     "diagnostic.infoSign": "\uf129",
     "diagnostic.hintSign": "\uf864",
     "diagnostic.displayByAle": false,
     "diagnostic.refreshOnInsertMode": false,
-    //"diagnostic.refreshAfterSave": false,
     "diagnostic.checkCurrentLine": true,
     "diagnostic.virtualTextPrefix": " ❯❯❯ ",
     "diagnostic.virtualText": true,
@@ -174,23 +254,19 @@
         "prisma"
     ],
     "yaml.format.enable": true,
-    "signature.target": "float",
     "yank.enableCompletion": false,
     "typescript.suggestionActions.enabled": true,
     "typescript.format.enabled": true,
     "python.autoComplete.addBrackets": true,
     "python.jediEnabled": false,
-    "python.formatting.provider": "yapf",
-    "python.formatting.yapfArgs": [
-        "--style",
-        "{SPACES_AROUND_POWER_OPERATOR: True, SPACES_BEFORE_COMMENT: 1}"
-    ],
-    //"coc-actions.hideCursor": false,
-    //"coc-actions.showActionKind": true,
+    "python.formatting.provider": "black",
     "git.enableGutters": true,
     "git.branchCharacter": "\uf408",
     "git.addGBlameToBufferVar": false,
     "git.addGBlameToVirtualText": false,
+    "diagnostic.messageTarget": "float",
+    "signature.target": "float",
+    "hover.target": "float",
     "git.virtualTextPrefix": " ❯❯❯ ",
     "git.addedSign.hlGroup": "GitGutterAdd",
     "git.changedSign.hlGroup": "GitGutterChange",
